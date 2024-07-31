@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ai-evolution-timeline/static/css/main.838dca03.css",
+    "main.js": "/ai-evolution-timeline/static/js/main.a54dcd15.js",
+    "static/js/453.49b96f1e.chunk.js": "/ai-evolution-timeline/static/js/453.49b96f1e.chunk.js",
+    "index.html": "/ai-evolution-timeline/index.html",
+    "main.838dca03.css.map": "/ai-evolution-timeline/static/css/main.838dca03.css.map",
+    "main.a54dcd15.js.map": "/ai-evolution-timeline/static/js/main.a54dcd15.js.map",
+    "453.49b96f1e.chunk.js.map": "/ai-evolution-timeline/static/js/453.49b96f1e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.838dca03.css",
+    "static/js/main.a54dcd15.js"
+  ]
+}
