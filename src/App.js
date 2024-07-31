@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Zap } from 'lucide-react';
 
 const timelineEvents = [
+  { year: 1940, event: "Bem-vindo à Linha do Tempo da IA", icon: "🚀", details: "A história da Inteligência Artificial, desde seus primórdios até os avanços mais recentes." },
   { year: 1950, event: "Teste de Turing", icon: "🧠", details: "Alan Turing publica 'Computing Machinery and Intelligence', introduzindo o teste de Turing e abrindo as portas para o que seria conhecido como IA." },
   { year: 1951, event: "Primeira Rede Neural Artificial", icon: "🔌", details: "Marvin Minsky e Dean Edmonds desenvolvem a SNARC, usando 3.000 válvulas para simular uma rede de 40 neurônios." },
   { year: 1952, event: "Programa de Damas", icon: "🎲", details: "Arthur Samuel desenvolve o Programa de Jogo de Damas, o primeiro programa de jogos do mundo que era auto-aprendiz." },
@@ -27,6 +28,7 @@ const timelineEvents = [
 ];
 
 const decadeSummaries = {
+  1940: "Uma viagem pela evolução da Inteligência Artificial!",
   1950: "Fundação da IA: Conceitos fundamentais e primeiros experimentos",
   1960: "Era dos Protótipos: Primeiros chatbots e sistemas especialistas",
   1970: "Desafios e Reajustes: Início do primeiro 'inverno da IA'",
@@ -38,17 +40,24 @@ const decadeSummaries = {
 };
 
 const AITimeline = () => {
-  const [animatedIndices, setAnimatedIndices] = useState([0, 1]);
-  const [currentDecade, setCurrentDecade] = useState(null);
+  const [animatedIndices, setAnimatedIndices] = useState([0]);
+  const [currentDecade, setCurrentDecade] = useState(1940);
+  const [showDecadeHighlight, setShowDecadeHighlight] = useState(true);
   const timelineRef = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setAnimatedIndices(prev => {
-        const nextIndices = [prev[1], (prev[1] + 1) % timelineEvents.length];
+        const nextIndices = [...prev, prev[prev.length - 1] + 1].slice(-2);
+        if (nextIndices[1] >= timelineEvents.length) {
+          clearInterval(timer);
+          return prev;
+        }
         const nextDecade = Math.floor(timelineEvents[nextIndices[1]].year / 10) * 10;
         if (nextDecade !== currentDecade) {
           setCurrentDecade(nextDecade);
+          setShowDecadeHighlight(true);
+          setTimeout(() => setShowDecadeHighlight(false), 5000);
         }
         
         // Scroll to the newly displayed item
@@ -69,11 +78,11 @@ const AITimeline = () => {
   }, [currentDecade]);
 
   return (
-    <div className="w-screen h-screen bg-gray-100 overflow-hidden flex flex-col">
+    <div className="w-screen h-screen bg-gray-100 overflow-hidden flex flex-col relative">
       <h2 className="text-3xl font-bold text-center my-4">Linha do Tempo da Inteligência Artificial</h2>
       <div className="flex-grow overflow-y-auto px-4" ref={timelineRef}>
         <div className="relative">
-          <div className="absolute left-1/2 top-0 w-1 bg-blue-300 h-full transform -translate-x-1/2"></div>
+          <div className="absolute left-1/2 top-0 w-1 bg-blue-900 h-full transform -translate-x-1/2"></div>
           {timelineEvents.map((event, index) => (
             <div
               key={index}
@@ -87,7 +96,7 @@ const AITimeline = () => {
                 <p className="text-lg font-semibold">{event.event}</p>
                 <p className="text-sm mt-2">{event.details}</p>
               </div>
-              <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white text-3xl z-10">
+              <div className="w-16 h-16 rounded-full bg-blue-900 flex items-center justify-center text-white text-3xl z-10">
                 {event.icon}
               </div>
               <div className="flex-1"></div>
@@ -95,13 +104,36 @@ const AITimeline = () => {
           ))}
         </div>
       </div>
-      {currentDecade && (
-        <div className="bg-blue-600 text-white p-4 text-center">
-          <h3 className="text-2xl font-bold mb-2">Década de {currentDecade}</h3>
+      {showDecadeHighlight && currentDecade && (
+        <div className="absolute inset-0 bg-blue-900 bg-opacity-90 flex items-center justify-center z-50 transition-opacity duration-500">
+          <div className="text-white text-center">
+            <h3 className="text-6xl font-bold mb-4">
+              {currentDecade === 1940 ? "Linha do Tempo da IA" : `Década de ${currentDecade}`}
+            </h3>
+            <p className="text-2xl">{decadeSummaries[currentDecade]}</p>
+            <Zap className="mx-auto mt-4 animate-pulse" size={48} />
+          </div>
+        </div>
+      )}
+      {currentDecade && !showDecadeHighlight && (
+        <div className="bg-blue-900 text-white p-4 text-center">
+          <h3 className="text-2xl font-bold mb-2">
+            {currentDecade === 1940 ? "Linha do Tempo da IA" : `Década de ${currentDecade}`}
+          </h3>
           <p>{decadeSummaries[currentDecade]}</p>
           <Zap className="mx-auto mt-2 animate-pulse" size={24} />
         </div>
       )}
+      
+      <div className="absolute bottom-0 left-0 right-0 bg-gray-200 text-gray-600 text-xs p-2 text-center">
+        Criado por Gabriel Serrao | Inspirado por dados de 
+        <a href="https://www.techtarget.com/searchenterpriseai/tip/The-history-of-artificial-intelligence-Complete-AI-timeline" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           className="underline ml-1">
+          TechTarget
+        </a>
+      </div>
     </div>
   );
 };
